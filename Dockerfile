@@ -23,6 +23,7 @@ RUN keytool -genkeypair -storepass password -storetype PKCS12 -keyalg RSA -keysi
     -dname "CN=server" -alias server -ext "SAN:c=DNS:localhost,IP:127.0.0.1" \
     -keystore conf/server.keystore
 
+ADD --chown=keycloak:keycloak https://github.com/daniel-frak/keycloak-user-migration/releases/download/6.0.0/keycloak-rest-provider-6.0.0.jar /opt/keycloak/providers/keycloak-rest-provider-6.0.0.jar
 ADD --chown=keycloak:keycloak https://repo1.maven.org/maven2/io/phasetwo/keycloak/keycloak-magic-link/0.33/keycloak-magic-link-0.33.jar /opt/keycloak/providers/keycloak-magic-link-0.33.jar
 ADD --chown=keycloak:keycloak https://repo1.maven.org/maven2/io/phasetwo/keycloak/keycloak-events/0.39/keycloak-events-0.39.jar /opt/keycloak/providers/keycloak-events-0.39.jar
 RUN /opt/keycloak/bin/kc.sh build
