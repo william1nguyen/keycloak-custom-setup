@@ -30,19 +30,19 @@ This guide provides detailed instructions on how to configure a webhook in Keycl
 
 2. Create a new realm:
 
-- Navigate to the Master Realm > Create Realm.
+- Navigate to the `Master Realm` > `Create Realm`.
 - Enter a realm name (e.g., dev) and save.
 
 3. Create a new client:
 
-- In the dev realm, go to Clients > Create.
+- In the dev realm, go to `Clients` > `Create`.
 - Provide a client ID (e.g., dev-client) and configure as needed.
 
 ## Step 3: Create an Admin User and Assign Roles
 
 1. Create a new admin user:
 
-- Go to Users > Add User.
+- Go to `Users` > `Add User`.
 - Fill in the required fields (e.g., username) and save.
 
 2. Assign roles to the admin user:
@@ -53,7 +53,14 @@ This guide provides detailed instructions on how to configure a webhook in Keycl
   - view-events
   - manage-events
 
-## Step 4: Obtain Admin Access Token
+## Step 4: Add Event Listeners
+
+Go to `Realm settings` > `Events` > `Event listeners`, add options:
+- `ext-event-http`
+- `ext-event-webhook`
+- `ext-event-script`
+
+## Step 5: Obtain Admin Access Token
 
 1. Send a POST request to retrieve the admin access token:
 
@@ -72,7 +79,7 @@ Payload: {
 
 2. Store the `access_token` from the response for the next steps.
 
-## Step 5: Add a Webhook to Keycloak
+## Step 6: Add a Webhook to Keycloak
 
 1. Send a POST request to configure the webhook:
 
@@ -89,7 +96,7 @@ Payload: {
 }
 ```
 
-- Replace {{ WEBHOOK_URL }} with your webhook endpoint.
+- Replace `{{ WEBHOOK_URL }}` with your webhook endpoint.
 - Use specific event types if needed (e.g., Register, Login).
 
 ## Examples
