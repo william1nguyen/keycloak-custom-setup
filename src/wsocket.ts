@@ -6,7 +6,8 @@ interface LogEntry {
   method: string,
   path: string,
   ip: string | undefined,
-  userAgent: string
+  userAgent: string,
+  body: string
 }
 
 class SocketHandler {

@@ -17,7 +17,8 @@ const logMiddleware = (req: Request, res: Response, next: NextFunction) => {
       method: req.method,
       path: req.path,
       ip: req.ip,
-      userAgent: req.get('User-Agent') || 'Unknown'
+      userAgent: req.get('User-Agent') || 'Unknown',
+      body: req.body
     };
     socketHandler.broadcastLog(logEntry);
   }
