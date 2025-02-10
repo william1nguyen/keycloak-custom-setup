@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import { createServer } from "http";
 import dotenv from "dotenv"
-import SocketHandler from "./wsocket";
+import SocketHandler, { LogEntry } from "./wsocket";
 import path from "node:path";
 
 dotenv.config();
@@ -12,13 +12,13 @@ const socketHandler = new SocketHandler(httpServer);
 
 const logMiddleware = (req: Request, res: Response, next: NextFunction) => {
   if (!req.path.startsWith('/socket.io')) {
-    const logEntry = {
+    const logEntry: LogEntry = {
       timestamp: new Date().toISOString(),
       method: req.method,
       path: req.path,
       ip: req.ip,
       userAgent: req.get('User-Agent') || 'Unknown',
-      body: req.body
+      payload: req.body
     };
     socketHandler.broadcastLog(logEntry);
   }

@@ -1,13 +1,13 @@
 import { Server as SocketServer } from "socket.io";
 import { Server as HttpServer } from "http";
 
-interface LogEntry {
+export interface LogEntry {
   timestamp: string,
   method: string,
   path: string,
   ip: string | undefined,
   userAgent: string,
-  body: string
+  payload: string
 }
 
 class SocketHandler {

@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="log-path">${log.path}</span>
             </div>
             <div class="log-details">${log.ip} - ${log.userAgent}</div>
+            ${log.payload ? `<pre class="log-payload">${JSON.stringify(log.payload, null, 2)}</pre>` : ""}
         `;
 
         logsContainer.appendChild(logEntry);
