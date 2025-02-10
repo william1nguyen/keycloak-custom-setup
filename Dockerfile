@@ -1,36 +1,34 @@
-FROM node:23-alpine as keycloakify_jar_builder
+ARG NODE_VERSION=20.13.1
 
-RUN apk --no-cache add git maven
-RUN git clone https://github.com/keycloakify/keycloakify-starter.git
-RUN mkdir -p /opt/app \
-    && cp ./keycloakify-starter/package.json /opt/app/ \
-    && cp ./keycloakify-starter/yarn.lock /opt/app/ 
+FROM node:${NODE_VERSION}-alpine AS base
+WORKDIR /app
+COPY package.json ./
 
-WORKDIR /opt/app
-RUN yarn install --frozen-lockfile
-RUN cp -r /keycloakify-starter/* /opt/app
-RUN yarn build-keycloak-theme
+#--
 
-FROM quay.io/keycloak/keycloak:26.1.0 as builder
-ENV KC_HEALTH_ENABLED=true
-ENV KC_METRICS_ENABLED=true
-ENV KC_DB=postgres
+FROM base AS pnpm
+COPY pnpm-lock.yaml ./
+RUN npm install -g pnpm@9.7.1 && pnpm fetch
 
-WORKDIR /opt/keycloak
+#--
 
-COPY --from=keycloakify_jar_builder /opt/app/dist_keycloak/*.jar /opt/keycloak/providers/
-RUN keytool -genkeypair -storepass password -storetype PKCS12 -keyalg RSA -keysize 2048 \
-    -dname "CN=server" -alias server -ext "SAN:c=DNS:localhost,IP:127.0.0.1" \
-    -keystore conf/server.keystore
+FROM pnpm AS prod-deps
+RUN pnpm install --prod --frozen-lockfile --ignore-scripts
 
-ADD --chown=keycloak:keycloak https://github.com/daniel-frak/keycloak-user-migration/releases/download/6.0.0/keycloak-rest-provider-6.0.0.jar /opt/keycloak/providers/keycloak-rest-provider-6.0.0.jar
-ADD --chown=keycloak:keycloak https://repo1.maven.org/maven2/io/phasetwo/keycloak/keycloak-magic-link/0.33/keycloak-magic-link-0.33.jar /opt/keycloak/providers/keycloak-magic-link-0.33.jar
-ADD --chown=keycloak:keycloak https://repo1.maven.org/maven2/io/phasetwo/keycloak/keycloak-events/0.39/keycloak-events-0.39.jar /opt/keycloak/providers/keycloak-events-0.39.jar
-RUN /opt/keycloak/bin/kc.sh build
+#--
 
-FROM quay.io/keycloak/keycloak:26.1.0
-COPY --from=builder /opt/keycloak/ /opt/keycloak/
+FROM pnpm AS build
+RUN pnpm install --frozen-lockfile --ignore-scripts
+COPY . .
+RUN pnpm build
 
-USER 1000
-ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
-CMD ["start", "--optimized", "--hostname-strict=false"]
+#--
+
+FROM base
+ENV NODE_ENV production
+COPY --from=prod-deps /app/node_modules /app/node_modules
+COPY --from=build /app/dist /app/dist
+COPY public /app/public
+
+EXPOSE 8000
+CMD ["node", "--enable-source-maps", "dist/index.js"]

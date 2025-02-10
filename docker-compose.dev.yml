@@ -19,7 +19,7 @@ services:
   keycloak:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.keycloak.dev
     environment:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: password
