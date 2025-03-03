@@ -56,6 +56,7 @@ This guide provides detailed instructions on how to configure a webhook in Keycl
 ## Step 4: Add Event Listeners
 
 Go to `Realm settings` > `Events` > `Event listeners`, add options:
+
 - `ext-event-http`
 - `ext-event-webhook`
 - `ext-event-script`
@@ -92,7 +93,8 @@ Headers: {
 Payload: {
   "enabled": "true",
   "url": "{{ WEBHOOK_URL }}",
-  "eventTypes": ["*"]
+  "secret": {{ WEBHOOK_SECRET }},
+  "eventTypes": ["access.*"]
 }
 ```
 
@@ -102,6 +104,20 @@ Payload: {
 ## Examples
 
 Webhook Response for `Register Request`:
+
+```bash
+Headers:  {
+  host: 'd2bd-42-114-249-121.ngrok-free.app',
+  'user-agent': 'Apache-HttpClient/4.5.14 (Java/21.0.6)',
+  'content-length': '610',
+  'accept-encoding': 'gzip,deflate',
+  'content-type': 'application/json',
+  'x-forwarded-for': '42.114.249.121',
+  'x-forwarded-host': 'd2bd-42-114-249-121.ngrok-free.app',
+  'x-forwarded-proto': 'https',
+  'x-keycloak-signature': '9653b4235b4224266e9c780933201e6349428181e54e86cefff3100e39420a79' # if using "secret"
+}
+```
 
 ```bash
 Webhook Body: {

@@ -2,12 +2,13 @@ import { Server as SocketServer } from "socket.io";
 import { Server as HttpServer } from "http";
 
 export interface LogEntry {
-  timestamp: string,
-  method: string,
-  path: string,
-  ip: string | undefined,
-  userAgent: string,
-  payload: string
+  timestamp: string;
+  method: string;
+  path: string;
+  ip: string | undefined;
+  userAgent: string;
+  headers: string;
+  payload: string;
 }
 
 class SocketHandler {
@@ -19,19 +20,19 @@ class SocketHandler {
   }
 
   private setupSocketConnections(): void {
-    this.io.on('connection', (socket) => {
-      console.log('Client connected');
-      
-      socket.on('disconnect', () => {
-        console.log('Client disconnected');
+    this.io.on("connection", (socket) => {
+      console.log("Client connected");
+
+      socket.on("disconnect", () => {
+        console.log("Client disconnected");
       });
     });
   }
 
   public broadcastLog(logEntry: LogEntry): void {
     console.log("Broadcasting log:", logEntry);
-    this.io.emit('new-log', logEntry);
-}
+    this.io.emit("new-log", logEntry);
+  }
 
   public getIO(): SocketServer {
     return this.io;
