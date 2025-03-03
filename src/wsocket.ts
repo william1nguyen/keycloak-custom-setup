@@ -7,8 +7,8 @@ export interface LogEntry {
   path: string;
   ip: string | undefined;
   userAgent: string;
-  headers: string;
-  payload: string;
+  headers: object;
+  payload: object;
 }
 
 class SocketHandler {
